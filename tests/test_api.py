@@ -57,7 +57,7 @@ def test_api():
         'amount': '60.0',
         'timestamp': datetime.utcnow().isoformat(),  # technical field to make tests possible
     }
-    txn_resp = requests.post('http://localhost:8000/v1/withdraw', json=txn)
+    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
     assert txn_resp.status_code == 402  # insufficient funds
     assert_balance(user, '50.00')
 
