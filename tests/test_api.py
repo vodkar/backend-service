@@ -29,6 +29,7 @@ def test_api():
         'uid': str(uuid.uuid4()),
         'type': 'DEPOSIT',
         'amount': '100.0',
+        'user_id': user['id'],
         'timestamp': datetime(2023, 1, 4).isoformat(),  # technical field to make tests possible
     }
     txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
@@ -43,6 +44,7 @@ def test_api():
         'uid': str(uuid.uuid4()),
         'type': 'WITHDRAW',
         'amount': '50.0',
+        'user_id': user['id'],
         'timestamp': datetime(2023, 1, 5).isoformat(),  # technical field to make tests possible
     }
     txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
@@ -55,6 +57,7 @@ def test_api():
         'uid': str(uuid.uuid4()),
         'type': 'WITHDRAW',
         'amount': '60.0',
+        'user_id': user['id'],
         'timestamp': datetime.utcnow().isoformat(),  # technical field to make tests possible
     }
     txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
@@ -65,6 +68,7 @@ def test_api():
         'uid': str(uuid.uuid4()),
         'type': 'WITHDRAW',
         'amount': '10.0',
+        'user_id': user['id'],
         'timestamp': datetime(2023, 2, 5).isoformat(),  # technical field to make tests possible
     }
     txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
