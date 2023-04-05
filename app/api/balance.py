@@ -12,14 +12,12 @@ async def get_current_balance_handler(request: web.Request):
         validate_fields_exists_in_dict(["id"], request.match_info)
     except ValueError as ve:
         return web.HTTPBadRequest(text=str(ve))
-    
+
     user_id = int(request.match_info["id"])
     if date := request.query.get("date"):
         date = datetime.fromisoformat(date)
         balance = await TransactionLog.get_balance(user_id, date)
     else:
         balance = await TransactionLog.get_balance(user_id)
-    
-    return web.json_response({"balance": f'{balance:.2f}'})
 
-    
+    return web.json_response({"balance": f'{balance:.2f}'})

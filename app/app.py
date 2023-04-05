@@ -27,7 +27,10 @@ def init_app() -> web.Application:
         DEBUG=True,
         HOST="localhost",
         PORT=8080,
-        DATABASE_URI=f"postgresql://{env('POSTGRES_USER')}:{env('POSTGRES_PASSWORD')}@{env('POSTGRES_HOSTNAME')}/{env('POSTGRES_DB')}")
+        DATABASE_URI=(
+            f"postgresql://{env('POSTGRES_USER')}:{env('POSTGRES_PASSWORD')}"
+            f"@{env('POSTGRES_HOSTNAME')}/{env('POSTGRES_DB')})")
+    )
 
     # Startups
     app.on_startup.append(init_db)

@@ -17,7 +17,7 @@ async def create_user_handler(request):
 
     if "name" not in data:
         raise aiohttp.web.HTTPBadRequest(text="'name' field is missing")
-    
+
     try:
         user = await User.create_user(name=data["name"])
     except ValueError as ve:

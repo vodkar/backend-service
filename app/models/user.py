@@ -16,5 +16,3 @@ class User(db.Model):
         if await User.query.where(User.name == name).gino.first():
             raise ValueError("User with this name already exists")
         return User(name=name)
-    
-        
