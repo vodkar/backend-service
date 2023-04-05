@@ -13,6 +13,9 @@ async def assert_balance(client, user, expected_balance, date=None):
 
 
 async def get_transaction_id(http_client, user_id: str):
+    # Получить уникальный идентификатор транзакции, чтобы избежать ситуации,
+    # когда могут быть обработаны несколько транзакций одновременно.
+    # Текущий бэкенд выступает как авторизованный издатель идентификаторов транзакций
     txn_resp = await http_client.post("v1/transaction", json={"user_id": user_id})
     return (await txn_resp.json())['transaction']['id']
 
