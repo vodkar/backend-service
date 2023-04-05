@@ -24,55 +24,8 @@
 - тезисно перечислить, какие инструменты можно применить для контроля качества работы сервиса
 - гарантировать, что баланс пользователя не может быть отрицательным
 
-## Настройка для vscode
+## Как запускать тесты
 
-- tasks.json:
-
-```json
-{
-    "tasks": [
-        {
-            "type": "docker-run",
-            "label": "docker-run: debug",
-            "dependsOn": [
-                "docker-build"
-            ],
-            "python": {
-                "module": "app",
-            }
-        },
-        {
-            "label": "docker-build",
-            "type": "docker-build",
-            "dockerBuild": {
-                "context": "${workspaceFolder}",
-                "dockerfile": "${workspaceFolder}/docker/Dockerfile",
-                "tag": "app:latest"
-            }
-        }
-    ]
-}```
-
-- launch.json
-
-```json
-{
-    "configurations": [
-        {
-            "name": "Docker: Python",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "python": {
-                "pathMappings": [
-                    {
-                        "localRoot": "${workspaceFolder}",
-                        "remoteRoot": "/app"
-                    }
-                ],
-                "projectType": "general"
-            }
-        }
-    ]
-}
+```bash
+docker compose -f "docker/docker-compose.test.yml" up --build
 ```
