@@ -1,12 +1,4 @@
-from gino import Gino
-
-db = Gino()
-
-
-class User(db.Model):
-    balance = db.Column(...)
-    ...
-
-
-class Transaction(db.Model):
-    ...
+from .db import db
+from .transaction import Transaction
+from .transaction_log import OperationType, TransactionLog
+from .user import User
