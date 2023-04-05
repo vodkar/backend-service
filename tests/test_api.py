@@ -12,6 +12,11 @@ async def assert_balance(client, user, expected_balance, date=None):
     assert json_resp['balance'] == expected_balance
 
 
+async def get_transaction_id(http_client, user_id: str):
+    txn_resp = await http_client.post("v1/transaction", json={"user_id": user_id})
+    return (await txn_resp.json())['transaction']['id']
+
+
 async def test_api(http_client):
     user_resp = await http_client.post('/v1/user', json={
         'name': 'petya'
@@ -19,19 +24,19 @@ async def test_api(http_client):
 
     assert user_resp.status == 201
     user = (await user_resp.json())['user']
-    assert user['id'] > 0
+    user_id: str = user['id']
+    assert user_id > 0
     assert user['name'] == 'petya'
 
     await assert_balance(http_client, user, '0.00')
 
-    txn_resp = await http_client.post("v1/transaction", json={"user_id": user['id']})
-    txn_id = (await txn_resp.json())['transaction']['id']
+    txn_id = await get_transaction_id(http_client, user_id)
 
     txn = {
         'transaction_id': txn_id,
         'type': 'DEPOSIT',
         'amount': '100.0',
-        'user_id': user['id']
+        'user_id': user_id
     }
     with mock.patch('app.models.transaction_log.datetime') as mock_datetime:
         mock_datetime.utcnow = mock.Mock(return_value=datetime(2023, 1, 4))
@@ -45,14 +50,13 @@ async def test_api(http_client):
     assert detailed_json['type'] == 'DEPOSIT'
     assert detailed_json['amount'] == '100.00'
 
-    txn_resp = await http_client.post("/v1/transaction", json={"user_id": user['id']})
-    txn_id = (await txn_resp.json())['transaction']['id']
+    txn_id = await get_transaction_id(http_client, user_id)
 
     txn = {
         'transaction_id': txn_id,
         'type': 'WITHDRAW',
         'amount': '50.0',
-        'user_id': user['id'],
+        'user_id': user_id,
     }
     with mock.patch('app.models.transaction_log.datetime') as mock_datetime:
         mock_datetime.utcnow = mock.Mock(return_value=datetime(2023, 1, 5))
@@ -61,27 +65,27 @@ async def test_api(http_client):
     assert txn_resp.status == 200
     await assert_balance(http_client, user, '50.00')
 
-    txn_resp = await http_client.post("/v1/transaction", json={"user_id": user['id']})
-    txn_id = (await txn_resp.json())['transaction']['id']
+    txn_resp = await http_client.post("/v1/transaction", json={"user_id": user_id})
+    txn_id = await get_transaction_id(http_client, user_id)
 
     txn = {
         'transaction_id': txn_id,
         'type': 'WITHDRAW',
         'amount': '60.0',
-        'user_id': user['id'],
+        'user_id': user_id,
     }
     txn_resp = await http_client.put('/v1/transaction', json=txn)
     assert txn_resp.status == 402  # insufficient funds
     await assert_balance(http_client, user, '50.00')
 
-    txn_resp = await http_client.post("/v1/transaction", json={"user_id": user['id']})
-    txn_id = (await txn_resp.json())['transaction']['id']
+    txn_resp = await http_client.post("/v1/transaction", json={"user_id": user_id})
+    txn_id = await get_transaction_id(http_client, user_id)
 
     txn = {
         'transaction_id': txn_id,
         'type': 'WITHDRAW',
         'amount': '10.0',
-        'user_id': user['id']
+        'user_id': user_id
     }
     with mock.patch('app.models.transaction_log.datetime') as mock_datetime:
         mock_datetime.utcnow = mock.Mock(return_value=datetime(2023, 2, 5))

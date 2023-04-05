@@ -24,7 +24,7 @@ async def get_current_user_transaction_handler(request):
         # когда два параллельных запроса могут сгенерить несколько идентификаторов транзакции для одного пользователя
         if not (transaction := await Transaction.query.where(
             and_(Transaction.user_id == user_id,
-                 Transaction.is_processed == False)
+                 Transaction.is_processed == False)  # noqa: E712
         ).with_for_update().gino.first()):
             transaction = Transaction(user_id=user_id)
             await transaction.create()
